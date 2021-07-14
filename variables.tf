@@ -4,10 +4,11 @@ variable aws_region {
   default     = "us-east-1"
 }
 
+# tags - can opt to remove
 variable project_name {
   description = "Name of the project. Used in resource names and tags."
   type        = string
-  default     = "client-webapp"
+  default     = "happy-meal-vpn-vpc"
 }
 
 variable environment {
@@ -15,6 +16,19 @@ variable environment {
   type        = string
   default     = "dev"
 }
+
+# - tags
+
+variable credentials_file {
+  type = string
+  default = "/Users/cascadeoPS/.aws/creds"
+}
+
+variable aws_profile {
+  type = string
+  default = "test"
+}
+
 
 variable public_subnets_per_vpc {
   description = "Number of public subnets. Maximum of 16."
@@ -26,12 +40,6 @@ variable private_subnets_per_vpc {
   description = "Number of private subnets. Maximum of 16."
   type        = number
   default     = 2
-}
-
-variable instance_type {
-  description = "Type of EC2 instance to use."
-  type        = string
-  default     = "t2.micro"
 }
 
 variable vpc_cidr_block {
