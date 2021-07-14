@@ -29,6 +29,16 @@ variable aws_profile {
   default = "test"
 }
 
+variable vpc_cidr_block {
+  description = "CIDR block for VPC"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable vpc_name {
+  type = string
+  default = "sample-vpc"
+}
 
 variable public_subnets_per_vpc {
   description = "Number of public subnets. Maximum of 16."
@@ -42,11 +52,6 @@ variable private_subnets_per_vpc {
   default     = 2
 }
 
-variable vpc_cidr_block {
-  description = "CIDR block for VPC"
-  type        = string
-  default     = "10.0.0.0/16"
-}
 
 variable public_subnet_cidr_blocks {
   description = "Available cidr blocks for public subnets"
