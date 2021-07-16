@@ -28,19 +28,19 @@ module "vpc" {
   private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
   public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
   
-  enable_vpn_gateway = true
+  enable_vpn_gateway = var.vpn_gateway_enable_bool
   customer_gateways = {
     default = {
-      bgp_asn    = 65000
-      ip_address = "172.83.124.10"
-      type       = "ipsec.1"
+      bgp_asn    = var.cgw_bgp_asn
+      ip_address = var.cgw_ip
+      type       = "ipsec.1" #this is the only type supported (static)
     }
   }
 
-  propagate_private_route_tables_vgw = true 
-  propagate_public_route_tables_vgw = true
+  propagate_private_route_tables_vgw = var.private_routetable_propagate_bool 
+  propagate_public_route_tables_vgw = var.public_routetable_propagate_bool
 
-  enable_nat_gateway = true
+  enable_nat_gateway = var.nat_gateway_enable_bool
 
 }
 

@@ -14,7 +14,7 @@ variable aws_profile {
   default = "test"
 }
 
-# for tags - can opt to remove
+# tags
 variable project_name {
   description = "Name of the project. Used in resource names and tags."
   type        = string
@@ -27,8 +27,7 @@ variable environment {
   default     = "dev"
 }
 
-# - tags
-
+# vpc init
 variable vpc_cidr_block {
   description = "CIDR block for VPC"
   type        = string
@@ -98,3 +97,39 @@ variable private_subnet_cidr_blocks {
     "10.0.116.0/24"
   ]
 }
+
+# vpc/vpn enabling resources
+variable "nat_gateway_enable_bool" {
+  type = bool
+  default = true
+}
+
+variable "vpn_gateway_enable_bool" {
+  type = bool
+  default = true
+}
+
+variable "private_routetable_propagate_bool" {
+  type = bool
+  default = true
+}
+
+variable "public_routetable_propagate_bool" {
+  type = bool
+  default = false
+}
+
+
+
+# cgw config
+variable "cgw_bgp_asn" {
+  description = "BGP ASN for the Customer Gateway"
+  type = number
+  default = 65000
+}
+
+variable "cgw_ip"{
+  description = "IP Address to associate with the Customer Gateway"
+  type = string
+}
+
