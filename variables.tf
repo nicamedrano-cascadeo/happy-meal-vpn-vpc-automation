@@ -4,7 +4,17 @@ variable aws_region {
   default     = "us-east-1"
 }
 
-# tags - can opt to remove
+variable credentials_file {
+  type = string
+  default = "/Users/cascadeoPS/.aws/creds"
+}
+
+variable aws_profile {
+  type = string
+  default = "test"
+}
+
+# for tags - can opt to remove
 variable project_name {
   description = "Name of the project. Used in resource names and tags."
   type        = string
@@ -18,16 +28,6 @@ variable environment {
 }
 
 # - tags
-
-variable credentials_file {
-  type = string
-  default = "/Users/cascadeoPS/.aws/creds"
-}
-
-variable aws_profile {
-  type = string
-  default = "test"
-}
 
 variable vpc_cidr_block {
   description = "CIDR block for VPC"

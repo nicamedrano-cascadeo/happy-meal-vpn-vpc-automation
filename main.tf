@@ -22,19 +22,13 @@ module "vpc" {
 
   name = var.vpc_name
   cidr = var.vpc_cidr_block
-
-  azs             = data.aws_availability_zones.available.names
-  private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
-  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
-
-  enable_nat_gateway = true
-  enable_vpn_gateway = true
+  azs = data.aws_availability_zones.available.names
 
   private_subnet_suffix = "private-subnet"
-
-  propagate_private_route_tables_vgw = true 
-  propagate_public_route_tables_vgw = true
-
+  private_subnets = slice(var.private_subnet_cidr_blocks, 0, var.private_subnets_per_vpc)
+  public_subnets  = slice(var.public_subnet_cidr_blocks, 0, var.public_subnets_per_vpc)
+  
+  enable_vpn_gateway = true
   customer_gateways = {
     default = {
       bgp_asn    = 65000
@@ -42,6 +36,11 @@ module "vpc" {
       type       = "ipsec.1"
     }
   }
+
+  propagate_private_route_tables_vgw = true 
+  propagate_public_route_tables_vgw = true
+
+  enable_nat_gateway = true
 
 }
 
