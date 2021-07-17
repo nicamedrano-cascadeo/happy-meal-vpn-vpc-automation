@@ -98,17 +98,20 @@ variable private_subnet_cidr_blocks {
   ]
 }
 
-# vpc/vpn enabling resources
-variable "nat_gateway_enable_bool" {
+# NAT Gateway
+variable "single_nat_gateway" {
   type = bool
-  default = true
+  description = "Set to true if all private subnets will be routed to only 1 NAT gateway. It will be placed in the first public subnet in the public_subnets block."
+  default = false
 }
 
-variable "vpn_gateway_enable_bool" {
+variable "one_nat_gateway_per_az" {
   type = bool
-  default = true
+  description = ""
+  default = false
 }
 
+# Route table propagation
 variable "private_routetable_propagate_bool" {
   type = bool
   default = true
@@ -131,5 +134,6 @@ variable "cgw_bgp_asn" {
 variable "cgw_ip"{
   description = "IP Address to associate with the Customer Gateway"
   type = string
+  default = "112.204.166.29"
 }
 
