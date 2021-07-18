@@ -6,12 +6,13 @@ variable aws_region {
 
 variable credentials_file {
   type = string
-  default = "/Users/cascadeoPS/.aws/creds"
+  description = "AWS credentials file location"
 }
 
 variable aws_profile {
   type = string
-  default = "test"
+  description = "AWS profile to be used to launch the AWS resources"
+  default = "default"
 }
 
 # tags
@@ -36,6 +37,7 @@ variable vpc_cidr {
 
 variable vpc_name {
   type = string
+  description = "Name of the VPC to be provisioned"
   default = "sample-vpc"
 }
 
@@ -50,7 +52,6 @@ variable private_subnets_per_vpc {
   type        = number
   default     = 2
 }
-
 
 variable public_subnet_cidr {
   description = "Available cidr blocks for public subnets"
@@ -101,11 +102,12 @@ variable private_subnet_cidr {
 variable "subnet_azs" {
   type = list(string)
   default = null
-  description = "Indicate the preferred AZ where the subnets will be provisioned, if any. Format is a list of strings. Set as null if none."
+  description = "Indicate the preferred AZ where the subnets will be provisioned, if any. Set as null if none is preferred. Default is to provision in AZs in chronological order"
 }
 
 # NAT Gateway
 variable "enable_nat_gateway" {
+  description = "Set to true to enable NAT gateway"
   type = bool
   default = true
 }
@@ -118,24 +120,27 @@ variable "single_nat_gateway" {
 
 variable "one_nat_gateway_per_az" {
   type = bool
-  description = ""
+  description = "Set to true to provision 1 NAT gateway per AZ"
   default = false
 }
 
 # Route table propagation
 variable "private_rt_propagate" {
   type = bool
+  description = "Set to true to enable route propagation for private subnets"
   default = true
 }
 
 variable "public_rt_propagate" {
   type = bool
+  description = "Set to true to enable route propagation for public subnets"
   default = false
 }
 
 # vpn config
 variable "create_vpn" {
   type = bool
+  description = "Set to true to provision VPN"
   default = true
 }
 
@@ -147,5 +152,6 @@ variable "vpn_gateway_az" {
 
 variable "customer_gateways_config" {
   type = map(any)
+  description = "The customer gateways configuration"
   default = {}
 }
