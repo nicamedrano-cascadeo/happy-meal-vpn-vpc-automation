@@ -28,7 +28,7 @@ variable environment {
 }
 
 # vpc init
-variable vpc_cidr_block {
+variable vpc_cidr {
   description = "CIDR block for VPC"
   type        = string
   default     = "10.0.0.0/16"
@@ -52,7 +52,7 @@ variable private_subnets_per_vpc {
 }
 
 
-variable public_subnet_cidr_blocks {
+variable public_subnet_cidr {
   description = "Available cidr blocks for public subnets"
   type        = list(string)
   default = [
@@ -75,7 +75,7 @@ variable public_subnet_cidr_blocks {
   ]
 }
 
-variable private_subnet_cidr_blocks {
+variable private_subnet_cidr {
   description = "Available cidr blocks for private subnets"
   type        = list(string)
   default = [
@@ -98,7 +98,18 @@ variable private_subnet_cidr_blocks {
   ]
 }
 
+variable "subnet_azs" {
+  type = list(string)
+  default = null
+  description = "Indicate the preferred AZ where the subnets will be provisioned, if any. Format is a list of strings. Set as null if none."
+}
+
 # NAT Gateway
+variable "enable_nat_gateway" {
+  type = bool
+  default = true
+}
+
 variable "single_nat_gateway" {
   type = bool
   description = "Set to true if all private subnets will be routed to only 1 NAT gateway. It will be placed in the first public subnet in the public_subnets block."
@@ -112,28 +123,29 @@ variable "one_nat_gateway_per_az" {
 }
 
 # Route table propagation
-variable "private_routetable_propagate_bool" {
+variable "private_rt_propagate" {
   type = bool
   default = true
 }
 
-variable "public_routetable_propagate_bool" {
+variable "public_rt_propagate" {
   type = bool
   default = false
 }
 
-
-
-# cgw config
-variable "cgw_bgp_asn" {
-  description = "BGP ASN for the Customer Gateway"
-  type = number
-  default = 65000
+# vpn config
+variable "create_vpn" {
+  type = bool
+  default = true
 }
 
-variable "cgw_ip"{
-  description = "IP Address to associate with the Customer Gateway"
+variable "vpn_gateway_az" {
   type = string
-  default = "112.204.166.29"
+  description = "Indicate the preferred AZ where the VPN gateway will be provisioned, if any. Set as null if none."
+  default = null
 }
 
+variable "customer_gateways_config" {
+  type = map(any)
+  default = {}
+}
