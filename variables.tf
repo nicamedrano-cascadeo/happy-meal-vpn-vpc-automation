@@ -11,8 +11,7 @@ variable credentials_file {
 
 variable aws_profile {
   type = string
-  description = "AWS profile to be used to launch the AWS resources"
-  default = "default"
+  description = "AWS profile to be used to launch the AWS resources. Set to 'default' if none was set."
 }
 
 # tags

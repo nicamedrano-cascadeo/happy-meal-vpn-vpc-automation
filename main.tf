@@ -43,7 +43,7 @@ module "vpc" {
 }
 
 resource "aws_vpn_connection" "vpn-connection" {
-  count = (var.create_vpn == false || var.customer_gateways_config == {}) ? 0 :length(var.customer_gateways_config)
+  count = var.create_vpn ? length(var.customer_gateways_config): 0 
   customer_gateway_id = module.vpc.cgw_ids != null ? module.vpc.cgw_ids[count.index]: null
   vpn_gateway_id      = module.vpc.vgw_id
   type                = "ipsec.1"
