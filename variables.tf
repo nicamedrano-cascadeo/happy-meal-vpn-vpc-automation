@@ -151,6 +151,12 @@ variable "vpn_gateway_az" {
 
 variable "customer_gateways_config" {
   type = map(any)
-  description = "The customer gateways configuration"
-  default = {}
+  description = "The customer gateways configuration. Set to {} if none"
+  default = {
+    sample-cgw = { #example cgw map format
+      bgp_asn    = 65000
+      ip_address = "1.1.1.1"
+      type       = "ipsec.1" 
+    }
+  }
 }
