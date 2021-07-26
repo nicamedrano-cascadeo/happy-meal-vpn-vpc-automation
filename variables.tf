@@ -14,19 +14,6 @@ variable aws_profile {
   description = "AWS profile to be used to launch the AWS resources. Set to 'default' if none was set."
 }
 
-# tags
-variable project_name {
-  description = "Name of the project. Used in resource names and tags."
-  type        = string
-  default     = "happy-meal-vpn-vpc"
-}
-
-variable environment {
-  description = "Value of the 'Environment' tag."
-  type        = string
-  default     = "dev"
-}
-
 # vpc init
 variable vpc_cidr {
   description = "CIDR block for VPC"
@@ -100,8 +87,8 @@ variable private_subnet_cidr {
 
 variable "subnet_azs" {
   type = list(string)
-  default = null
-  description = "Indicate the preferred AZ where the subnets will be provisioned, if any. Set as null if none is preferred. Default is to provision in AZs in chronological order"
+  default = []
+  description = "Indicate the preferred AZ where the subnets will be provisioned, if any. Set as [] if none is preferred. Default is to provision in each available AZ in chronological order"
 }
 
 # NAT Gateway
@@ -145,8 +132,8 @@ variable "create_vpn" {
 
 variable "vpn_gateway_az" {
   type = string
-  description = "Indicate the preferred AZ where the VPN gateway will be provisioned, if any. Set as null if none."
-  default = null
+  description = "Indicate the preferred AZ where the VPN gateway will be provisioned, if any. Leave blank if none."
+  default = ""
 }
 
 variable "customer_gateways_config" {

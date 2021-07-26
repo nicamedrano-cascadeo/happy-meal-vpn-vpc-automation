@@ -24,7 +24,7 @@ module "vpc" {
   name = var.vpc_name
   cidr = var.vpc_cidr
 
-  azs = var.subnet_azs != null ? var.subnet_azs : data.aws_availability_zones.available.names
+  azs = var.subnet_azs != [] ? var.subnet_azs : data.aws_availability_zones.available.names
   private_subnets = slice(var.private_subnet_cidr, 0, var.private_subnets_per_vpc)
   public_subnets  = slice(var.public_subnet_cidr, 0, var.public_subnets_per_vpc)
 
@@ -34,7 +34,7 @@ module "vpc" {
   
   #vpn
   enable_vpn_gateway = var.create_vpn
-  vpn_gateway_az = var.create_vpn && var.vpn_gateway_az != null ? var.vpn_gateway_az : data.aws_availability_zones.available.names[0] 
+  vpn_gateway_az = var.create_vpn && var.vpn_gateway_az != "" ? var.vpn_gateway_az : data.aws_availability_zones.available.names[0] 
   customer_gateways = var.create_vpn ? var.customer_gateways_config : {}
 
   propagate_private_route_tables_vgw = var.create_vpn ? var.private_rt_propagate : false
