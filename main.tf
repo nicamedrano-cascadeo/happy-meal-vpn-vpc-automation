@@ -16,35 +16,30 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "2.66.0"
+######
+# VPC
+######
+resource "aws_vpc" "this" {
+  cidr_block                       = var.vpc_cidr
+  instance_tenancy                 = var.instance_tenancy
+  enable_dns_hostnames             = var.enable_dns_hostnames
+  enable_dns_support               = var.enable_dns_support
+  enable_classiclink               = var.enable_classiclink
+  enable_classiclink_dns_support   = var.enable_classiclink_dns_support
+  assign_generated_ipv6_cidr_block = var.enable_ipv6
 
-  #vpc
-  name = var.vpc_name
-  cidr = var.vpc_cidr
-
-  azs = var.subnet_azs != null ? var.subnet_azs : data.aws_availability_zones.available.names
-  private_subnets = slice(var.private_subnet_cidr, 0, var.private_subnets_per_vpc)
-  public_subnets  = slice(var.public_subnet_cidr, 0, var.public_subnets_per_vpc)
-
-  enable_nat_gateway = var.enable_nat_gateway
-  single_nat_gateway  = var.enable_nat_gateway ? var.single_nat_gateway : false
-  one_nat_gateway_per_az = var.enable_nat_gateway? var.one_nat_gateway_per_az : false
-  
-  #vpn
-  enable_vpn_gateway = var.create_vpn
-  vpn_gateway_az = var.create_vpn && var.vpn_gateway_az != null ? var.vpn_gateway_az : data.aws_availability_zones.available.names[0] 
-  customer_gateways = var.create_vpn ? var.customer_gateways_config : {}
-
-  propagate_private_route_tables_vgw = var.create_vpn ? var.private_rt_propagate : false
-  propagate_public_route_tables_vgw = var.create_vpn ? var.public_rt_propagate : false
-
+  tags = merge(
+    {
+      "Name" = format("%s", var.vpc_name)
+    },
+    var.tags,
+    var.vpc_tags,
+  )
 }
 
-resource "aws_vpn_connection" "vpn-connection" {
-  count = var.create_vpn ? length(var.customer_gateways_config): 0 
-  customer_gateway_id = module.vpc.cgw_ids != null ? module.vpc.cgw_ids[count.index]: null
-  vpn_gateway_id      = module.vpc.vgw_id
-  type                = "ipsec.1"
-}
+# resource "aws_vpn_connection" "vpn-connection" {
+#   count = var.create_vpn ? length(var.customer_gateways_config): 0 
+#   customer_gateway_id = module.vpc.cgw_ids != null ? module.vpc.cgw_ids[count.index]: null
+#   vpn_gateway_id      = module.vpc.vgw_id
+#   type                = "ipsec.1"
+# }
