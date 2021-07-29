@@ -23,7 +23,7 @@ locals {
     length(var.database_subnets),
     length(var.redshift_subnets),
   )
-  nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.private_azs) : local.max_subnet_length
+  nat_gateway_count = var.single_nat_gateway ? 1 : var.one_nat_gateway_per_az ? length(var.public_azs) : local.max_subnet_length
 
   # Use `local.vpc_id` to give a hint to Terraform that subnets should be deleted before secondary CIDR blocks can be free!
   vpc_id = element(
@@ -920,7 +920,7 @@ resource "aws_eip" "nat" {
       "Name" = format(
         "%s-%s",
         var.name,
-        element(var.private_azs, var.single_nat_gateway ? 0 : count.index),
+        element(var.public_azs, var.single_nat_gateway ? 0 : count.index),
       )
     },
     var.tags,
@@ -945,7 +945,7 @@ resource "aws_nat_gateway" "this" {
       "Name" = format(
         "%s-%s",
         var.name,
-        element(var.private_azs, var.single_nat_gateway ? 0 : count.index),
+        element(var.public_azs, var.single_nat_gateway ? 0 : count.index),
       )
     },
     var.tags,
