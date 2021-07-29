@@ -3,10 +3,10 @@
 #   value       = module.elb_http.this_elb_dns_name
 # }
 
-output vpc_arn {
-  description = "ARN of the vpc"
-  value       = module.vpc.vpc_arn
-}
+# output vpc_arn {
+#   description = "ARN of the vpc"
+#   value       = module.vpc.vpc_arn
+# }
 
 
 # output instance_ids {
