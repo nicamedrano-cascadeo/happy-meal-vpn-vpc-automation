@@ -36,6 +36,10 @@ locals {
     var.tags,
     var.vpc_endpoint_tags,
   )
+
+  public_azs = var.public_azs != [] ? var.public_azs: data.aws_availability_zones.available.name
+  private_azs = var.private_azs != [] ? var.private_azs: data.aws_availability_zones.available.name
+  intra_azs = var.intra_azs != [] ? var.intra_azs: data.aws_availability_zones.available.name
 }
 
 ######
