@@ -1,3 +1,7 @@
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 variable aws_region {
   description = "AWS region"
   type        = string

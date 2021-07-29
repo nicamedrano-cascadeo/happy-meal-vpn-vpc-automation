@@ -203,6 +203,23 @@ resource "aws_route_table" "private" {
   )
 }
 
+#################
+# Intra routes
+#################
+resource "aws_route_table" "intra" {
+  count = var.create_vpc && length(var.intra_subnets) > 0 ? 1 : 0
+
+  vpc_id = local.vpc_id
+
+  tags = merge(
+    {
+      "Name" = "${var.name}-${var.intra_subnet_suffix}"
+    },
+    var.tags,
+    var.intra_route_table_tags,
+  )
+}
+
 ################
 # Public subnet
 ################
@@ -258,6 +275,33 @@ resource "aws_subnet" "private" {
   )
 }
 
+#####################################################
+# intra subnets - private subnet without NAT gateway
+#####################################################
+resource "aws_subnet" "intra" {
+  count = var.create_vpc && length(var.intra_subnets) > 0 ? length(var.intra_subnets) : 0
+
+  vpc_id                          = local.vpc_id
+  cidr_block                      = var.intra_subnets[count.index]
+  availability_zone               = length(regexall("^[a-z]{2}-", element(var.intra_azs, count.index))) > 0 ? element(var.intra_azs, count.index) : null
+  availability_zone_id            = length(regexall("^[a-z]{2}-", element(var.intra_azs, count.index))) == 0 ? element(var.intra_azs, count.index) : null
+  assign_ipv6_address_on_creation = var.intra_subnet_assign_ipv6_address_on_creation == null ? var.assign_ipv6_address_on_creation : var.intra_subnet_assign_ipv6_address_on_creation
+
+  ipv6_cidr_block = var.enable_ipv6 && length(var.intra_subnet_ipv6_prefixes) > 0 ? cidrsubnet(aws_vpc.this[0].ipv6_cidr_block, 8, var.intra_subnet_ipv6_prefixes[count.index]) : null
+
+  tags = merge(
+    {
+      "Name" = format(
+        "%s-${var.intra_subnet_suffix}-%s",
+        var.name,
+        element(var.intra_azs, count.index),
+      )
+    },
+    var.tags,
+    var.intra_subnet_tags,
+  )
+}
+
 #######################
 # Default Network ACLs
 #######################
@@ -271,11 +315,13 @@ resource "aws_default_network_acl" "this" {
   subnet_ids = setsubtract(
     compact(flatten([
       aws_subnet.public.*.id,
-      aws_subnet.private.*.id
+      aws_subnet.private.*.id,
+      aws_subnet.intra.*.id,
     ])),
     compact(flatten([
       aws_network_acl.public.*.subnet_ids,
-      aws_network_acl.private.*.subnet_ids
+      aws_network_acl.private.*.subnet_ids,
+      aws_network_acl.intra.*.subnet_ids,
     ]))
   )
 
@@ -421,6 +467,58 @@ resource "aws_network_acl_rule" "private_outbound" {
   ipv6_cidr_block = lookup(var.private_outbound_acl_rules[count.index], "ipv6_cidr_block", null)
 }
 
+########################
+# Intra Network ACLs
+########################
+resource "aws_network_acl" "intra" {
+  count = var.create_vpc && var.intra_dedicated_network_acl && length(var.intra_subnets) > 0 ? 1 : 0
+
+  vpc_id     = element(concat(aws_vpc.this.*.id, [""]), 0)
+  subnet_ids = aws_subnet.intra.*.id
+
+  tags = merge(
+    {
+      "Name" = format("%s-${var.intra_subnet_suffix}", var.name)
+    },
+    var.tags,
+    var.intra_acl_tags,
+  )
+}
+
+resource "aws_network_acl_rule" "intra_inbound" {
+  count = var.create_vpc && var.intra_dedicated_network_acl && length(var.intra_subnets) > 0 ? length(var.intra_inbound_acl_rules) : 0
+
+  network_acl_id = aws_network_acl.intra[0].id
+
+  egress          = false
+  rule_number     = var.intra_inbound_acl_rules[count.index]["rule_number"]
+  rule_action     = var.intra_inbound_acl_rules[count.index]["rule_action"]
+  from_port       = lookup(var.intra_inbound_acl_rules[count.index], "from_port", null)
+  to_port         = lookup(var.intra_inbound_acl_rules[count.index], "to_port", null)
+  icmp_code       = lookup(var.intra_inbound_acl_rules[count.index], "icmp_code", null)
+  icmp_type       = lookup(var.intra_inbound_acl_rules[count.index], "icmp_type", null)
+  protocol        = var.intra_inbound_acl_rules[count.index]["protocol"]
+  cidr_block      = lookup(var.intra_inbound_acl_rules[count.index], "cidr_block", null)
+  ipv6_cidr_block = lookup(var.intra_inbound_acl_rules[count.index], "ipv6_cidr_block", null)
+}
+
+resource "aws_network_acl_rule" "intra_outbound" {
+  count = var.create_vpc && var.intra_dedicated_network_acl && length(var.intra_subnets) > 0 ? length(var.intra_outbound_acl_rules) : 0
+
+  network_acl_id = aws_network_acl.intra[0].id
+
+  egress          = true
+  rule_number     = var.intra_outbound_acl_rules[count.index]["rule_number"]
+  rule_action     = var.intra_outbound_acl_rules[count.index]["rule_action"]
+  from_port       = lookup(var.intra_outbound_acl_rules[count.index], "from_port", null)
+  to_port         = lookup(var.intra_outbound_acl_rules[count.index], "to_port", null)
+  icmp_code       = lookup(var.intra_outbound_acl_rules[count.index], "icmp_code", null)
+  icmp_type       = lookup(var.intra_outbound_acl_rules[count.index], "icmp_type", null)
+  protocol        = var.intra_outbound_acl_rules[count.index]["protocol"]
+  cidr_block      = lookup(var.intra_outbound_acl_rules[count.index], "cidr_block", null)
+  ipv6_cidr_block = lookup(var.intra_outbound_acl_rules[count.index], "ipv6_cidr_block", null)
+}
+
 ##############
 # NAT Gateway
 ##############
@@ -524,6 +622,13 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public[0].id
 }
 
+resource "aws_route_table_association" "intra" {
+  count = var.create_vpc && length(var.intra_subnets) > 0 ? length(var.intra_subnets) : 0
+
+  subnet_id      = element(aws_subnet.intra.*.id, count.index)
+  route_table_id = element(aws_route_table.intra.*.id, 0)
+}
+
 ####################
 # Customer Gateways
 ####################
@@ -595,3 +700,25 @@ resource "aws_vpn_gateway_route_propagation" "private" {
   )
 }
 
+resource "aws_vpn_gateway_route_propagation" "intra" {
+  count = var.create_vpc && var.propagate_intra_route_tables_vgw && (var.enable_vpn_gateway || var.vpn_gateway_id != "") ? length(var.intra_subnets) : 0
+
+  route_table_id = element(aws_route_table.intra.*.id, count.index)
+  vpn_gateway_id = element(
+    concat(
+      aws_vpn_gateway.this.*.id,
+      aws_vpn_gateway_attachment.this.*.vpn_gateway_id,
+    ),
+    count.index,
+  )
+}
+
+##############
+# VPN Site-to-Site
+##############
+# resource "aws_vpn_connection" "vpn-connection" {
+#   count = var.create_vpn ? length(var.customer_gateways_config): 0 
+#   customer_gateway_id = module.vpc.cgw_ids != null ? module.vpc.cgw_ids[count.index]: null
+#   vpn_gateway_id      = module.vpc.vgw_id
+#   type                = "ipsec.1"
+# }
