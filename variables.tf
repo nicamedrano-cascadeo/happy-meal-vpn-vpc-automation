@@ -1816,6 +1816,12 @@ variable "map_public_ip_on_launch" {
 ######
 # VPN Config
 ######
+variable "create_vpn" {
+  type = bool
+  description = "Set to true to provision VPN"
+  default = false
+}
+
 variable "customer_gateways" {
   description = "Maps of Customer Gateway's attributes (BGP ASN and Gateway's Internet-routable external IP address)"
   type        = map(map(any))

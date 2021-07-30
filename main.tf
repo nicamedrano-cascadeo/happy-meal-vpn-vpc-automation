@@ -720,12 +720,12 @@ resource "aws_vpn_gateway_route_propagation" "intra" {
   )
 }
 
-##############
+#############
 # VPN Site-to-Site
-##############
-# resource "aws_vpn_connection" "vpn-connection" {
-#   count = var.create_vpn ? length(var.customer_gateways_config): 0 
-#   customer_gateway_id = module.vpc.cgw_ids != null ? module.vpc.cgw_ids[count.index]: null
-#   vpn_gateway_id      = module.vpc.vgw_id
-#   type                = "ipsec.1"
-# }
+#############
+resource "aws_vpn_connection" "vpn-connection" {
+  count = var.create_vpn && var.enable_vpn_gateway ? length(var.customer_gateways): 0 
+  customer_gateway_id = aws_customer_gateway.this != {} ? aws_customer_gateway.this[keys(aws_customer_gateway.this)[count.index]].id : null
+  vpn_gateway_id      = aws_vpn_gateway.this[0].id
+  type                = "ipsec.1"
+}
