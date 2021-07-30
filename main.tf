@@ -17,9 +17,9 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  public_azs = var.public_azs != [] ? var.public_azs: data.aws_availability_zones.available.names
-  private_azs = var.private_azs != [] ? var.private_azs: data.aws_availability_zones.available.names
-  intra_azs = var.intra_azs != [] ? var.intra_azs: data.aws_availability_zones.available.names
+  public_azs = var.public_azs != [] ? var.public_azs: toset(data.aws_availability_zones.available.names)
+  private_azs = var.private_azs != [] ? var.private_azs: toset(data.aws_availability_zones.available.names)
+  intra_azs = var.intra_azs != [] ? var.intra_azs: toset(data.aws_availability_zones.available.names)
 
   max_subnet_length = max(
     length(var.private_subnets)
