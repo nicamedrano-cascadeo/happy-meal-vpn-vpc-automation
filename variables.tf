@@ -14,7 +14,7 @@ variable aws_profile {
   description = "AWS profile to be used to launch the AWS resources. Set to 'default' if none was set."
 }
 
-# vpc init
+# VPC init
 variable vpc_cidr {
   description = "CIDR block for VPC"
   type        = string
@@ -27,6 +27,7 @@ variable vpc_name {
   default = "sample-vpc"
 }
 
+#Subnets
 variable public_subnets_per_vpc {
   description = "Number of public subnets. Maximum of 16."
   type        = number
@@ -37,6 +38,12 @@ variable private_subnets_per_vpc {
   description = "Number of private subnets. Maximum of 16."
   type        = number
   default     = 2
+}
+
+variable intra_subnets_per_vpc {
+  description = "Number of private subnets. Maximum of 16."
+  type        = number
+  default     = 0
 }
 
 variable public_subnet_cidr {
@@ -85,6 +92,12 @@ variable private_subnet_cidr {
   ]
 }
 
+variable intra_subnet_cidr {
+  description = "Available cidr blocks for intra subnets"
+  type        = list(string)
+  default = []
+}
+
 variable "subnet_azs" {
   type = list(string)
   default = []
@@ -123,7 +136,13 @@ variable "public_rt_propagate" {
   default = false
 }
 
-# vpn config
+variable "intra_rt_propagate" {
+  type = bool
+  description = "Set to true to enable route propagation for intra subnets"
+  default = false
+}
+
+# VPN config
 variable "create_vpn" {
   type = bool
   description = "Set to true to provision VPN"
