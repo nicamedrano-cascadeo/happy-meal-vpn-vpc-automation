@@ -24,13 +24,13 @@ module "vpc" {
   name = var.vpc_name
   cidr = var.vpc_cidr
 
-  #Subnets
+  #SUBNETS
   azs = var.subnet_azs != [] ? var.subnet_azs : data.aws_availability_zones.available.names
   private_subnets = slice(var.private_subnet_cidr, 0, var.private_subnets_per_vpc)
   public_subnets  = slice(var.public_subnet_cidr, 0, var.public_subnets_per_vpc)
   intra_subnets = slice(var.intra_subnet_cidr, 0, var.intra_subnets_per_vpc)
 
-  #NAT gateway
+  #NAT GATEWAY
   enable_nat_gateway = var.enable_nat_gateway
   single_nat_gateway  = var.enable_nat_gateway ? var.single_nat_gateway : false
   one_nat_gateway_per_az = var.enable_nat_gateway? var.one_nat_gateway_per_az : false
@@ -40,15 +40,67 @@ module "vpc" {
   vpn_gateway_az = var.create_vpn && var.vpn_gateway_az != "" ? var.vpn_gateway_az : data.aws_availability_zones.available.names[0] 
   customer_gateways = var.create_vpn ? var.customer_gateways_config : {}
 
-  #Route Propagation
+  #ROUTE PROPAGATION
   propagate_private_route_tables_vgw = var.create_vpn ? var.private_rt_propagate : false
   propagate_public_route_tables_vgw = var.create_vpn ? var.public_rt_propagate : false
   propagate_intra_route_tables_vgw = var.create_vpn ? var.intra_rt_propagate : false
 }
 
-resource "aws_vpn_connection" "vpn-connection" {
+module "vpn_gateway" {
+  source  = "terraform-aws-modules/vpn-gateway/aws"
+  version = "~> 2.0"
   count = var.create_vpn ? length(var.customer_gateways_config): 0 
-  customer_gateway_id = module.vpc.cgw_ids != null ? module.vpc.cgw_ids[count.index]: null
-  vpn_gateway_id      = module.vpc.vgw_id
-  type                = "ipsec.1"
+
+  vpc_id                  = module.vpc.vpc_id
+  vpn_gateway_id          = module.vpc.vgw_id
+  customer_gateway_id     = length(module.vpc.cgw_ids) != 0 ? module.vpc.cgw_ids[count.index]: null
+
+  # ENABLE ROUTE PROPAGATION FOR CUSTOM RESOURCES (OPTIONAL)
+  # vpc_subnet_route_table_count = 1
+  # vpc_subnet_route_table_ids   = [aws_route_table.adhoc.id]
+
+  # TUNNEL INSIDE CIDR AND PRESHARED KEYS (OPTIONAL)
+  # tunnel1_inside_cidr   = var.custom_tunnel1_inside_cidr
+  # tunnel2_inside_cidr   = var.custom_tunnel2_inside_cidr
+  # tunnel1_preshared_key = var.custom_tunnel1_preshared_key
+  # tunnel2_preshared_key = var.custom_tunnel2_preshared_key
 }
+
+# CUSTOM RESOURCES: USE TO MANUALLY ADD ADDITIONAL SUBNETS AND ROUTE TABLES IF NEEDED (OPTIONAL)
+# resource "aws_subnet" "adhoc" {
+#   vpc_id     = module.vpc.vpc_id
+#   availability_zone = data.aws_availability_zones.available.names[0]
+#   cidr_block = "10.0.5.0/24"
+
+#   tags = {
+#     Name = "AdHoc Test"
+#   }
+# }
+
+# resource "aws_route_table" "adhoc" {
+#   vpc_id = module.vpc.vpc_id
+
+#   route {
+#     cidr_block = "0.0.0.0/0"
+#     gateway_id = module.vpc.igw_id
+#   }
+
+#   # route {
+#   #   cidr_block = "0.0.0.0/0"
+#   #   gateway_id = module.vpc.natgw_ids[0]
+#   # }
+
+#   # route {
+#   #   ipv6_cidr_block        = "::/0"
+#   #   egress_only_gateway_id = module.vpc.egress_only_internet_gateway_id
+#   # }
+
+#   tags = {
+#     Name = "AdHoc Test"
+#   }
+# }
+
+# resource "aws_route_table_association" "adhoc" {
+#   subnet_id      = aws_subnet.adhoc.id
+#   route_table_id = aws_route_table.adhoc.id
+# }
