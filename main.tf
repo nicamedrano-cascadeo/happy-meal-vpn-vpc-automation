@@ -55,25 +55,26 @@ module "vpn_gateway" {
   vpn_gateway_id          = module.vpc.vgw_id
   customer_gateway_id     = length(module.vpc.cgw_ids) != 0 ? module.vpc.cgw_ids[count.index]: null
 
-  # ENABLE ROUTE PROPAGATION FOR CUSTOM RESOURCES (OPTIONAL)
-  # vpc_subnet_route_table_count = 1
-  # vpc_subnet_route_table_ids   = [aws_route_table.adhoc.id]
-
   # TUNNEL INSIDE CIDR AND PRESHARED KEYS (OPTIONAL)
   # tunnel1_inside_cidr   = var.custom_tunnel1_inside_cidr
   # tunnel2_inside_cidr   = var.custom_tunnel2_inside_cidr
   # tunnel1_preshared_key = var.custom_tunnel1_preshared_key
   # tunnel2_preshared_key = var.custom_tunnel2_preshared_key
+
+  # ENABLE ROUTE PROPAGATION FOR CUSTOM RESOURCES (OPTIONAL)
+  # vpc_subnet_route_table_count = 1
+  # vpc_subnet_route_table_ids   = [aws_route_table.adhoc.id]
 }
 
 # CUSTOM RESOURCES: USE TO MANUALLY ADD ADDITIONAL SUBNETS AND ROUTE TABLES IF NEEDED (OPTIONAL)
 # resource "aws_subnet" "adhoc" {
+#   count = var.adhoc_subnets_per_vpc
 #   vpc_id     = module.vpc.vpc_id
 #   availability_zone = data.aws_availability_zones.available.names[0]
-#   cidr_block = "10.0.5.0/24"
+#   cidr_block = var.adhoc_subnet_cidr[count.index]
 
 #   tags = {
-#     Name = "AdHoc Test"
+#     Name = "${var.vpc_name}-adhoc-subnet"
 #   }
 # }
 
@@ -96,11 +97,12 @@ module "vpn_gateway" {
 #   # }
 
 #   tags = {
-#     Name = "AdHoc Test"
+#     Name = "${var.vpc_name}-adhoc-route-table"
 #   }
 # }
 
 # resource "aws_route_table_association" "adhoc" {
-#   subnet_id      = aws_subnet.adhoc.id
+#   count = var.adhoc_subnets_per_vpc
+#   subnet_id      = aws_subnet.adhoc[count.index].id
 #   route_table_id = aws_route_table.adhoc.id
 # }
