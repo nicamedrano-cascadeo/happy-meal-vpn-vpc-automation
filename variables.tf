@@ -126,7 +126,7 @@ variable "one_nat_gateway_per_az" {
   default = false
 }
 
-# ROUTE TABLE PROPAGATION
+# ROUTE PROPAGATION
 variable "private_rt_propagate" {
   type = bool
   description = "Set to true to enable route propagation for private subnets"

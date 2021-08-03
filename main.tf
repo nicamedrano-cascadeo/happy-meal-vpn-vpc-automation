@@ -56,7 +56,7 @@ module "vpn_gateway" {
   vpn_gateway_id          = module.vpc.vgw_id
   customer_gateway_id     = length(module.vpc.cgw_ids) != 0 ? module.vpc.cgw_ids[count.index]: null
 
-  # TUNNEL INSIDE CIDR AND PRESHARED KEYS (OPTIONAL: DISABLED BY DEFAULT)
+  # TUNNEL INSIDE CUSTOM CIDR AND PRESHARED KEYS (OPTIONAL: DISABLED BY DEFAULT)
   tunnel1_inside_cidr   = var.custom_tunnel1_inside_cidr
   tunnel2_inside_cidr   = var.custom_tunnel2_inside_cidr
   tunnel1_preshared_key = var.custom_tunnel1_preshared_key
@@ -71,6 +71,7 @@ module "vpn_gateway" {
 resource "aws_subnet" "adhoc" {
   count = var.adhoc_subnets_per_vpc
   vpc_id     = module.vpc.vpc_id
+  # availability_zone = element(data.aws_availability_zones.available.names,count.index)
   availability_zone = data.aws_availability_zones.available.names[0]
   cidr_block = var.adhoc_subnet_cidr[count.index]
 
