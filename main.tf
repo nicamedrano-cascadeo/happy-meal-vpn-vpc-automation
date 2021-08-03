@@ -37,7 +37,7 @@ module "vpc" {
   
   #VPN
   enable_vpn_gateway = var.create_vpn
-  vpn_gateway_az = var.create_vpn && var.vpn_gateway_az != "" ? var.vpn_gateway_az : data.aws_availability_zones.available.names[0] 
+  vpn_gateway_az = var.create_vpn && var.vpn_gateway_az != "" ? var.vpn_gateway_az : length(var.subnet_azs) != 0 ? var.subnet_azs[0] : data.aws_availability_zones.available.names[0] 
   customer_gateways = var.create_vpn ? var.customer_gateways_config : {}
 
   #ROUTE PROPAGATION
