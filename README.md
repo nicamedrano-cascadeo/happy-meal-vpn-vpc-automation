@@ -10,8 +10,10 @@ These templates build the following AWS resources:
 - Virtual Private Gateway
 
 ## How to Use
+The deployment instructions describe a default deployment setting and a custom one. Custom deployments that does not correspond to the [default architecture](#default-architecture) provided below should proceed to [Custom Settings](#custom-settings)
+
 ### Default Settings
-#### Architecture
+#### Default Architecture
 ![alt text](https://github.com/nicamedrano-cascadeo/happy-meal-vpn-vpc-automation/blob/master/architecture-diagrams/default-architecture-white-bg.png)
 
 #### Configuration Steps
@@ -29,6 +31,9 @@ These templates build the following AWS resources:
     
 
 ### Custom Settings
+#### Customizable Parameters
+
+#### Configuration Steps
 - Clone this repository on your local machine
 - Prepare a ***.tfvars** file with the custom values for the declared variables 
     - NOTE: See **sample.tfvars.txt** file for reference. To be able use this file in specifying the values, the .txt extension must be removed.
