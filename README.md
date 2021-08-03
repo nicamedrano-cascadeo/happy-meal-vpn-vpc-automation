@@ -10,7 +10,7 @@ These templates build the following AWS resources:
 - Virtual Private Gateway
 
 ## How to Use
-The deployment instructions describe a default deployment setting and a custom one. Custom deployments that does not correspond to the [default architecture](#default-architecture) provided below should proceed to [Custom Settings](#custom-settings)
+The deployment instructions describe a default deployment setting and a custom one. Custom deployments that do not correspond to the [default architecture](#default-architecture) provided below should proceed to [Custom Settings](#custom-settings)
 
 ### Default Settings
 #### Default Architecture
