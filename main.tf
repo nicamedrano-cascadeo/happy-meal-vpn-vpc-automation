@@ -84,10 +84,10 @@ resource "aws_route_table" "adhoc" {
   count = var.adhoc_subnets_per_vpc != 0 ? 1 : 0
   vpc_id = module.vpc.vpc_id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = module.vpc.igw_id
-  }
+  # route {
+  #   cidr_block = "0.0.0.0/0"
+  #   gateway_id = module.vpc.igw_id
+  # }
 
   # route {
   #   cidr_block = "0.0.0.0/0"
