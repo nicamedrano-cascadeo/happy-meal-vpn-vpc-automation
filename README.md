@@ -11,6 +11,10 @@ These templates build the following AWS resources:
 
 ## How to Use
 ### Default Settings
+#### Architecture
+![alt text](https://github.com/nicamedrano-cascadeo/happy-meal-vpn-vpc-automation/blob/master/default-architecture.png)
+
+#### Configuration Steps
 - Clone this repository on your local machine
 - Get ready with the AWS Account Credentials where the resources will be provisioned
 - Execute `terraform init` to initialize terraform environment
