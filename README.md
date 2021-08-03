@@ -33,6 +33,25 @@ The deployment instructions describe a default deployment setting and a custom o
 ### Custom Settings
 #### Customizable Parameters
 
+- NAT Gateway
+    - This template supports three scenarios for creating NAT gateways.
+    - One NAT Gateway per private subnet (default behavior)
+        - `enable_nat_gateway = true`
+        - `single_nat_gateway = false`
+        - `one_nat_gateway_per_az = false`
+    - Single NAT Gateway
+        - NAT gateway is provisioned in the first subnet in the public_subnets block
+        - `enable_nat_gateway = true`
+        - `single_nat_gateway = true`
+        - `one_nat_gateway_per_az = false`
+    - One NAT Gateway per availability zone
+        - Provisions one NAT gateway in each availability zone specified in var.subnet_azs
+        - The number of public subnets must be greater than or equal to the number of availability zones specified in var.subnet_azs. This is to ensure that each NAT Gateway has a dedicated public subnet to deploy to.
+        - `enable_nat_gateway = true`
+        - `single_nat_gateway = false`
+        - `one_nat_gateway_per_az = true`
+    - If both `single_nat_gateway` and `one_nat_gateway_per_az` are set to **true**, then `single_nat_gateway` takes precedence.
+
 #### Configuration Steps
 - Clone this repository on your local machine
 - Prepare a ***.tfvars** file with the custom values for the declared variables 
