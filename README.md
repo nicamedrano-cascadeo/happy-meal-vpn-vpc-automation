@@ -1,8 +1,8 @@
 # VPN and VPC Automated Creation
 These templates build the following AWS resources: 
 - VPC
-- Private and Public Subnets
-- Private and Public Route Tables
+- Subnets
+- Route Tables
 - NAT Gateways
 - Internet Gateway
 - VPN Site-to-Site Connection
@@ -13,7 +13,7 @@ These templates build the following AWS resources:
 ### Default Settings
 1. Clone this repository to your local machine
 2. Get ready with the AWS Account Credentials where the resources will be provisioned
-3. Execute terraform init
+3. Execute `terraform init`
 4. terraform apply
 5. Verify resources to be provisioned. Type yes then enter
 
