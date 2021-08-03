@@ -1,3 +1,4 @@
+# AWS CONFIGURATION
 variable aws_region {
   description = "AWS region"
   type        = string
@@ -14,7 +15,7 @@ variable aws_profile {
   description = "AWS profile to be used to launch the AWS resources. Set to 'default' if none was set."
 }
 
-# VPC init
+# VPC
 variable vpc_cidr {
   description = "CIDR block for VPC"
   type        = string
@@ -27,7 +28,7 @@ variable vpc_name {
   default = "sample-vpc"
 }
 
-#Subnets
+#SUBNETS COUNT
 variable public_subnets_per_vpc {
   description = "Number of public subnets. Maximum of 16."
   type        = number
@@ -46,6 +47,7 @@ variable intra_subnets_per_vpc {
   default     = 0
 }
 
+# SUBNETS CIDR
 variable public_subnet_cidr {
   description = "Available cidr blocks for public subnets"
   type        = list(string)
@@ -98,13 +100,14 @@ variable intra_subnet_cidr {
   default = []
 }
 
+# SUBNETS AZS
 variable "subnet_azs" {
   type = list(string)
   default = []
   description = "Indicate the preferred AZ where the subnets will be provisioned, if any. Set as [] if none is preferred. Default is to provision in each available AZ in chronological order"
 }
 
-# NAT Gateway
+# NAT GATEWAY
 variable "enable_nat_gateway" {
   description = "Set to true to enable NAT gateway"
   type = bool
@@ -123,7 +126,7 @@ variable "one_nat_gateway_per_az" {
   default = false
 }
 
-# Route table propagation
+# ROUTE TABLE PROPAGATION
 variable "private_rt_propagate" {
   type = bool
   description = "Set to true to enable route propagation for private subnets"
@@ -142,7 +145,7 @@ variable "intra_rt_propagate" {
   default = false
 }
 
-# VPN config
+# VPN
 variable "create_vpn" {
   type = bool
   description = "Set to true to provision VPN"
