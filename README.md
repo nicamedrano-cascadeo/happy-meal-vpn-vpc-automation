@@ -1,4 +1,4 @@
-# VPN and VPC Automated Creation
+# AWS VPN and VPC Automated Creation
 These templates build the following AWS resources: 
 - VPC
 - Subnets
