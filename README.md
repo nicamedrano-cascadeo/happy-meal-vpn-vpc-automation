@@ -1,5 +1,5 @@
 # VPN and VPC Automated Creation
-This terraform template builds the following AWS resources: 
+These templates build the following AWS resources: 
 - VPC
 - Private and Public Subnets
 - Private and Public Route Tables
@@ -8,3 +8,6 @@ This terraform template builds the following AWS resources:
 - VPN Site-to-Site Connection
 - Customer Gateway
 - Virtual Private Gateway
+
+## How to Use
+1. Clone this repository to your local machine
