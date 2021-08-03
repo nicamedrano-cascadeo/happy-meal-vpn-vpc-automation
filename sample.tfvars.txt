@@ -1,0 +1,84 @@
+# AWS CONFIGURATION
+aws_region = "us-east-1"
+credentials_file = "/Users/user/.aws/credentials"
+aws_profile = "test"
+
+# VPC
+vpc_cidr = "10.0.0.0/16"
+vpc_name = "sample-vpc"
+
+# SUBNETS COUNT
+public_subnets_per_vpc = 1
+private_subnets_per_vpc = 2
+
+# SUBNETS CIDR
+public_subnet_cidr = [
+    "10.0.1.0/24",
+    "10.0.2.0/24",
+    "10.0.3.0/24",
+    "10.0.4.0/24",
+    "10.0.5.0/24",
+    "10.0.6.0/24",
+    "10.0.7.0/24",
+    "10.0.8.0/24",
+    "10.0.9.0/24",
+    "10.0.10.0/24",
+    "10.0.11.0/24",
+    "10.0.12.0/24",
+    "10.0.13.0/24",
+    "10.0.14.0/24",
+    "10.0.15.0/24",
+    "10.0.16.0/24"
+]
+private_subnet_cidr = [
+    "10.0.101.0/24",
+    "10.0.102.0/24",
+    "10.0.103.0/24",
+    "10.0.104.0/24",
+    "10.0.105.0/24",
+    "10.0.106.0/24",
+    "10.0.107.0/24",
+    "10.0.108.0/24",
+    "10.0.109.0/24",
+    "10.0.110.0/24",
+    "10.0.111.0/24",
+    "10.0.112.0/24",
+    "10.0.113.0/24",
+    "10.0.114.0/24",
+    "10.0.115.0/24",
+    "10.0.116.0/24"
+]
+
+# SUBNETS AZS
+subnet_azs = ["us-east-1a"]
+
+# NAT GATEWAY
+enable_nat_gateway = true
+single_nat_gateway = false
+one_nat_gateway_per_az = true
+
+# ROUTE PROPAGRATION
+private_rt_propagate = true
+public_rt_propagate = false 
+
+# VPN
+create_vpn = true
+vpn_gateway_az = ""
+customer_gateways_config = { #TODO: Add another map entry when adding another customer gateway
+    default = {
+        bgp_asn    = 65000
+        ip_address = "112.204.166.29"
+        type       = "ipsec.1" 
+    }
+}
+
+# TUNNEL DETAILS (OPTIONAL)
+custom_tunnel1_inside_cidr = ""
+custom_tunnel2_inside_cidr = ""
+custom_tunnel1_preshared_key = ""
+custom_tunnel2_preshared_key = ""
+
+# CUSTOM RESOURCES (OPTIONAL)
+adhoc_subnets_per_vpc = 0
+adhoc_subnet_cidr = []
+adhoc_rt_propagate = false
