@@ -25,7 +25,7 @@ module "vpc" {
   cidr = var.vpc_cidr
 
   #SUBNETS
-  azs = var.subnet_azs != [] ? var.subnet_azs : data.aws_availability_zones.available.names
+  azs = length(var.subnet_azs) != 0 ? var.subnet_azs : data.aws_availability_zones.available.names
   private_subnets = slice(var.private_subnet_cidr, 0, var.private_subnets_per_vpc)
   public_subnets  = slice(var.public_subnet_cidr, 0, var.public_subnets_per_vpc)
   intra_subnets = slice(var.intra_subnet_cidr, 0, var.intra_subnets_per_vpc)
