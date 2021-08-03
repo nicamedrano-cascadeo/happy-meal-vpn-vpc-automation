@@ -63,8 +63,8 @@ module "vpn_gateway" {
   tunnel2_preshared_key = var.custom_tunnel2_preshared_key
 
   # ENABLE ROUTE PROPAGATION FOR CUSTOM RESOURCES (OPTIONAL: DISABLED BY DEFAULT) - FEEL FREE TO CUSTOMIZE BASED ON THE REQUIREMENTS
-  vpc_subnet_route_table_count = var.adhoc_subnets_per_vpc != 0 ? 1 : 0
-  vpc_subnet_route_table_ids   = var.adhoc_subnets_per_vpc != 0 ? [aws_route_table.adhoc[0].id] : []
+  vpc_subnet_route_table_count = var.adhoc_rt_propagate && var.adhoc_subnets_per_vpc != 0 ? 1 : 0
+  vpc_subnet_route_table_ids   = var.adhoc_rt_propagate && var.adhoc_subnets_per_vpc != 0 ? [aws_route_table.adhoc[0].id] : []
 }
 
 # CUSTOM RESOURCES: USE TO MANUALLY ADD ADDITIONAL SUBNETS AND ROUTE TABLES IF NEEDED (OPTIONAL: DISABLED BY DEFAULT) - FEEL FREE TO CUSTOMIZE BASED ON THE REQUIREMENTS

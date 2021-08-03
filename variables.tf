@@ -201,3 +201,9 @@ variable "adhoc_subnet_cidr" {
   type = list(string)
   default = []
 }
+
+variable "adhoc_rt_propagate" {
+  type = bool
+  description = "Set to true to enable route propagation for adhoc subnets"
+  default = false
+}
