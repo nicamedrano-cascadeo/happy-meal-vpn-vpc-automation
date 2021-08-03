@@ -170,34 +170,34 @@ variable "customer_gateways_config" {
   }
 }
 
-# TUNNEL DETAILS (OPTIONAL)
-# variable "custom_tunnel1_inside_cidr" {
-#   type = string
-#   default = ""
-# }
+# TUNNEL DETAILS (OPTIONAL: DISABLED BY DEFAULT)
+variable "custom_tunnel1_inside_cidr" {
+  type = string
+  default = ""
+}
 
-# variable "custom_tunnel2_inside_cidr" {
-#   type = string
-#   default = ""
-# }
+variable "custom_tunnel2_inside_cidr" {
+  type = string
+  default = ""
+}
 
-# variable "custom_tunnel1_preshared_key" {
-#   type = string
-#   default = ""
-# }
+variable "custom_tunnel1_preshared_key" {
+  type = string
+  default = ""
+}
 
-# variable "custom_tunnel2_preshared_key" {
-#   type = string
-#   default = ""
-# }
+variable "custom_tunnel2_preshared_key" {
+  type = string
+  default = ""
+}
 
-# CUSTOM RESOURCES (OPTIONAL)
-# variable "adhoc_subnets_per_vpc" {
-#   type = number
-#   default = 1
-# }
+# CUSTOM RESOURCES (OPTIONAL: DISABLED BY DEFAULT)
+variable "adhoc_subnets_per_vpc" {
+  type = number
+  default = 0
+}
 
-# variable "adhoc_subnet_cidr" {
-#   type = list(string)
-#   default = []
-# }
+variable "adhoc_subnet_cidr" {
+  type = list(string)
+  default = []
+}

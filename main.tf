@@ -46,6 +46,7 @@ module "vpc" {
   propagate_intra_route_tables_vgw = var.create_vpn ? var.intra_rt_propagate : false
 }
 
+# VPN
 module "vpn_gateway" {
   source  = "terraform-aws-modules/vpn-gateway/aws"
   version = "~> 2.0"
@@ -55,54 +56,55 @@ module "vpn_gateway" {
   vpn_gateway_id          = module.vpc.vgw_id
   customer_gateway_id     = length(module.vpc.cgw_ids) != 0 ? module.vpc.cgw_ids[count.index]: null
 
-  # TUNNEL INSIDE CIDR AND PRESHARED KEYS (OPTIONAL)
-  # tunnel1_inside_cidr   = var.custom_tunnel1_inside_cidr
-  # tunnel2_inside_cidr   = var.custom_tunnel2_inside_cidr
-  # tunnel1_preshared_key = var.custom_tunnel1_preshared_key
-  # tunnel2_preshared_key = var.custom_tunnel2_preshared_key
+  # TUNNEL INSIDE CIDR AND PRESHARED KEYS (OPTIONAL: DISABLED BY DEFAULT)
+  tunnel1_inside_cidr   = var.custom_tunnel1_inside_cidr
+  tunnel2_inside_cidr   = var.custom_tunnel2_inside_cidr
+  tunnel1_preshared_key = var.custom_tunnel1_preshared_key
+  tunnel2_preshared_key = var.custom_tunnel2_preshared_key
 
-  # ENABLE ROUTE PROPAGATION FOR CUSTOM RESOURCES (OPTIONAL)
-  # vpc_subnet_route_table_count = 1
-  # vpc_subnet_route_table_ids   = [aws_route_table.adhoc.id]
+  # ENABLE ROUTE PROPAGATION FOR CUSTOM RESOURCES (OPTIONAL: DISABLED BY DEFAULT) - FEEL FREE TO CUSTOMIZE BASED ON THE REQUIREMENTS
+  vpc_subnet_route_table_count = var.adhoc_subnets_per_vpc != 0 ? 1 : 0
+  vpc_subnet_route_table_ids   = var.adhoc_subnets_per_vpc != 0 ? [aws_route_table.adhoc[0].id] : []
 }
 
-# CUSTOM RESOURCES: USE TO MANUALLY ADD ADDITIONAL SUBNETS AND ROUTE TABLES IF NEEDED (OPTIONAL)
-# resource "aws_subnet" "adhoc" {
-#   count = var.adhoc_subnets_per_vpc
-#   vpc_id     = module.vpc.vpc_id
-#   availability_zone = data.aws_availability_zones.available.names[0]
-#   cidr_block = var.adhoc_subnet_cidr[count.index]
+# CUSTOM RESOURCES: USE TO MANUALLY ADD ADDITIONAL SUBNETS AND ROUTE TABLES IF NEEDED (OPTIONAL: DISABLED BY DEFAULT) - FEEL FREE TO CUSTOMIZE BASED ON THE REQUIREMENTS
+resource "aws_subnet" "adhoc" {
+  count = var.adhoc_subnets_per_vpc
+  vpc_id     = module.vpc.vpc_id
+  availability_zone = data.aws_availability_zones.available.names[0]
+  cidr_block = var.adhoc_subnet_cidr[count.index]
 
-#   tags = {
-#     Name = "${var.vpc_name}-adhoc-subnet"
-#   }
-# }
+  tags = {
+    Name = "${var.vpc_name}-adhoc-subnet"
+  }
+}
 
-# resource "aws_route_table" "adhoc" {
-#   vpc_id = module.vpc.vpc_id
+resource "aws_route_table" "adhoc" {
+  count = var.adhoc_subnets_per_vpc != 0 ? 1 : 0
+  vpc_id = module.vpc.vpc_id
 
-#   route {
-#     cidr_block = "0.0.0.0/0"
-#     gateway_id = module.vpc.igw_id
-#   }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = module.vpc.igw_id
+  }
 
-#   # route {
-#   #   cidr_block = "0.0.0.0/0"
-#   #   gateway_id = module.vpc.natgw_ids[0]
-#   # }
+  # route {
+  #   cidr_block = "0.0.0.0/0"
+  #   gateway_id = module.vpc.natgw_ids[0]
+  # }
 
-#   # route {
-#   #   ipv6_cidr_block        = "::/0"
-#   #   egress_only_gateway_id = module.vpc.egress_only_internet_gateway_id
-#   # }
+  # route {
+  #   ipv6_cidr_block        = "::/0"
+  #   egress_only_gateway_id = module.vpc.egress_only_internet_gateway_id
+  # }
 
-#   tags = {
-#     Name = "${var.vpc_name}-adhoc-route-table"
-#   }
-# }
+  tags = {
+    Name = "${var.vpc_name}-adhoc-route-table"
+  }
+}
 
-# resource "aws_route_table_association" "adhoc" {
-#   count = var.adhoc_subnets_per_vpc
-#   subnet_id      = aws_subnet.adhoc[count.index].id
-#   route_table_id = aws_route_table.adhoc.id
-# }
+resource "aws_route_table_association" "adhoc" {
+  count = var.adhoc_subnets_per_vpc
+  subnet_id      = aws_subnet.adhoc[count.index].id
+  route_table_id = aws_route_table.adhoc[0].id
+}
