@@ -166,7 +166,7 @@ The deployment instructions describe a default deployment setting and a custom o
             }
             ```
 
-#### Optional Parameters
+#### Optional Parameters (Disabled by default)
 - Tunnel Details
     - Use the following parameters to specify custom tunnel cidr and preshared keys
         ```
