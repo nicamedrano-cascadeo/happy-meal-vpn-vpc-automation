@@ -184,6 +184,9 @@ The deployment instructions describe a default deployment setting and a custom o
         adhoc_rt_propagate = true
         ```
     - Refer to `main.tf` and look for **# CUSTOM RESOURCES:** to customize the adhoc resources depending on your use case (such as provisioning in a specific AZ, adding a custom route, etc)
+ 
+- Other configurations: 
+    - For VPC and VPN options that were not described, since this module uses the VPC and VPN module provided by terraform, you can manually add custom features directly to `main.tf`. See [VPC module](#vpc-module) and [VPN module](#vpn-gateway-module) for reference on the possible configurations (VPC flow logs, DHCP, Service endpoints, etc). 
 
 #### Configuration Steps
 - Clone this repository on your local machine
