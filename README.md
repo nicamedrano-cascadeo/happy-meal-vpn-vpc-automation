@@ -180,7 +180,7 @@ The deployment instructions describe a default deployment setting and a custom o
     - If you need to provision subnets that are outside of the scope of the main template, feel free to use the adhoc subnets and route tables. The configurations for these resources can be edited in the `main.tf` file but by default, it can provision a set of subnets in 1 AZ, and 1 route table with no routes, using the ff variables:
         ```
         adhoc_subnets_per_vpc = 1
-        adhoc_subnet_cidr = [""10.0.16.0/24""]
+        adhoc_subnet_cidr = ["10.0.16.0/24"]
         adhoc_rt_propagate = true
         ```
     - Refer to `main.tf` and look for **# CUSTOM RESOURCES:** to customize the adhoc resources depending on your use case (such as provisioning in a specific AZ, adding a custom route, etc)
