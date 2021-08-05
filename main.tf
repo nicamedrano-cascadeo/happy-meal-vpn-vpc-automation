@@ -71,8 +71,9 @@ module "vpn_gateway" {
 resource "aws_subnet" "adhoc" {
   count = var.adhoc_subnets_per_vpc
   vpc_id     = module.vpc.vpc_id
-  # availability_zone = element(data.aws_availability_zones.available.names,count.index)
-  availability_zone = data.aws_availability_zones.available.names[0]
+  # availability_zone = element(data.aws_availability_zones.available.names,count.index) # use to provision starting from az-a onwards
+  # availability_zone = ['us-east-1a'] # use to manually provide azs
+  availability_zone = data.aws_availability_zones.available.names[0] # use to provision in only 1 AZ
   cidr_block = var.adhoc_subnet_cidr[count.index]
 
   tags = {
